@@ -4,43 +4,12 @@ pragma solidity ^0.8.13;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract MockGTX {
-    enum OrderType {
-        MarketIncrease,
-        LimitIncrease,
-        MarketDecrease,
-        LimitDecrease,
-        StopLossDecrease,
-        Liquidation,
-        StopIncrease
-    }
-
     struct CreateOrderParams {
         // Address parameters
-        address receiver;
-        address cancellationReceiver;
-        address callbackContract;
-        address uiFeeReceiver;
         address market;
         address initialCollateralToken;
-        // address[] swapPath;
-
-        // Order type parameters
-        OrderType orderType;
-        // DecreasePositionSwapType decreasePositionSwapType;
-
-        // Numerical parameters
         uint256 sizeDeltaUsd;
         uint256 initialCollateralDeltaAmount;
-        uint256 triggerPrice;
-        uint256 acceptablePrice;
-        uint256 executionFee;
-        // uint256 callbackGasLimit;
-        // uint256 minOutputAmount;
-        uint256 validFromTime;
-        // Boolean parameters
-        bool isLong;
-        // bool shouldUnwrapNativeToken;
-        bool autoCancel;
     }
 
     uint256 currentOrderId;
@@ -63,6 +32,11 @@ contract MockGTX {
         currentOrderId++;
         positions[currentOrderId] = _params;
         return currentOrderId;
+    }
+
+    function increaseOrder(uint256 _orderId, uint256 amount) external {
+        CreateOrderParams storage position = positions[_orderId];
+        position.sizeDeltaUsd += amount;
     }
 
     function cancelOrder(uint256 _orderId) external {
